@@ -62,6 +62,8 @@ module X
               nid:    nid
             }.merge(options.symbolize_keys)
 
+            puts "Log 2: #{value}"
+
             if !value.instance_of? Object
               data[:value] = type == 'wysihtml5' ? Base64.encode64(output_value) : output_value
             end
@@ -74,7 +76,11 @@ module X
               data: data
             })
 
+            puts "Log 3: #{html_options}"
+            puts "Log 4: #{tag}"
+
             content_tag tag, html_options do
+              puts "Logx #{tag} #{html_options}"
               if %w(select checklist).include?(data[:type].to_s) && !source.is_a?(String)
                 source = normalize_source(source)
                 content = source.detect { |t| output_value == output_value_for(t[0]) }
@@ -83,10 +89,12 @@ module X
                 safe_join(source_values_for(value, source), tag(:br))
               end
             end
-
+            puts "Log 5: #{content_tag}"
             if value.instance_of? Object
               content_tag << type == 'wysihtml5' ? Base64.encode64(output_value) : output_value
             end
+
+            content_tag
           else
             error || safe_join(source_values_for(value || options[:emptytext], source), tag(:br))
           end
