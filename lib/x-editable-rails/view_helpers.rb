@@ -54,7 +54,6 @@ module X
               type:   type,
               model:  model,
               name:   method,
-              value:  ( type == 'wysihtml5' ? Base64.encode64(output_value) : output_value ), 
               placeholder: placeholder,
               classes: classes,
               source: source,
@@ -62,6 +61,10 @@ module X
               nested: nested,
               nid:    nid
             }.merge(options.symbolize_keys)
+
+            if !value.instance_of? Object
+              data[:value] = type == 'wysihtml5' ? Base64.encode64(output_value) : output_value
+            end
 
             data.reject!{|_, value| value.nil?}
 
@@ -79,6 +82,10 @@ module X
               else
                 safe_join(source_values_for(value, source), tag(:br))
               end
+            end
+
+            if value.instance_of? Object
+              content_tag << type == 'wysihtml5' ? Base64.encode64(output_value) : output_value
             end
           else
             error || safe_join(source_values_for(value || options[:emptytext], source), tag(:br))
